@@ -3,9 +3,10 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
+  ],theme: {
+    extend: {
+      scrollbar: ['rounded'], // Optional rounded scrollbars
+    },
   },
   plugins: [],
 }

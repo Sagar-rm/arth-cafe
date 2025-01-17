@@ -1,28 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { Coffee, ShoppingCart, User, Menu, X, Instagram, Facebook, Twitter, MapPin, Phone, Mail, ChevronRight, Sun, Moon, Plus, Minus } from 'lucide-react';
-import  Button  from "./components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
-import { Input } from "./components/ui/input.jsx";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "/src/components/ui/dialog.jsx";
-import { Label } from "./components/ui/label";
-import { Textarea } from "./components/ui/textarea";
-import { Switch } from "./components/ui/switch";
-import { ScrollArea } from "./components/ui/scrollarea";
-import { Separator } from "./components/ui/separator";
+import { Coffee, ShoppingCart, User, Menu, X, Instagram, Facebook, Twitter, MapPin, Phone, Mail, ChevronRight, Sun, Moon, Plus, Minus, Star, Calendar, Clock, Users, ChevronsUpDown, Check } from 'lucide-react';
+import  Button  from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import  Input  from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import  Label  from "@/components/ui/label";
+import  Textarea  from "@/components/ui/textarea";
+import  Switch  from "@/components/ui/switch";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import  Separator  from "@/components/ui/separator";
+import  Slider  from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { format } from "date-fns";
+import CalendarComponent from "@/components/ui/calendar";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,} from '@/components/ui/select.jsx';  // Adjust the path as necessary
 
-const ArthCafeLuxe = () => {
+
+
+const ArthCafeDeluxe = () => {
   const [cartItems, setCartItems] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('coffee');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [fontSize, setFontSize] = useState(16);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState("12:00");
+  const [guests, setGuests] = useState(2);
 
   useEffect(() => {
     document.body.classList.toggle('dark', isDarkMode);
-  }, [isDarkMode]);
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [isDarkMode, fontSize]);
 
   const addToCart = (item) => {
     setCartItems(prevItems => {
@@ -34,6 +58,7 @@ const ArthCafeLuxe = () => {
       }
       return [...prevItems, { ...item, quantity: 1 }];
     });
+    setLoyaltyPoints(prevPoints => prevPoints + 10);
     toast.success(`${item.name} added to cart!`);
   };
 
@@ -59,7 +84,7 @@ const ArthCafeLuxe = () => {
 
   const handleReservation = (e) => {
     e.preventDefault();
-    toast.success('Reservation submitted successfully! We\'ll confirm shortly.');
+    toast.success(`Reservation confirmed for ${guests} guests on ${format(date, 'MMMM d, yyyy')} at ${time}`);
   };
 
   const handleSubscribe = (e) => {
@@ -69,32 +94,39 @@ const ArthCafeLuxe = () => {
 
   const menuItems = {
     coffee: [
-      { name: "Signature Espresso", description: "Bold and robust", price: "$3.99", image: "/placeholder.svg?height=150&width=200&text=Signature+Espresso" },
+      { name: "Signature Espresso", description: "Bold and robust", price: "$3.99", image: "/placeholder.svg?height=150&width=200&text=Signature+Espresso", bestSeller: true },
       { name: "Vanilla Latte", description: "Smooth with a hint of sweetness", price: "$4.99", image: "/placeholder.svg?height=150&width=200&text=Vanilla+Latte" },
       { name: "Caramel Macchiato", description: "Rich caramel flavor", price: "$5.49", image: "/placeholder.svg?height=150&width=200&text=Caramel+Macchiato" },
       { name: "Mocha Frappé", description: "Chocolatey and refreshing", price: "$5.99", image: "/placeholder.svg?height=150&width=200&text=Mocha+Frappé" },
       { name: "Iced Americano", description: "Strong and cool", price: "$4.49", image: "/placeholder.svg?height=150&width=200&text=Iced+Americano" },
-      { name: "Coconut Cold Brew", description: "Smooth with tropical notes", price: "$4.99", image: "/placeholder.svg?height=150&width=200&text=Coconut+Cold+Brew" }
+      { name: "Coconut Cold Brew", description: "Smooth with tropical notes", price: "$4.99", image: "/placeholder.svg?height=150&width=200&text=Coconut+Cold+Brew", bestSeller: true }
     ],
     food: [
-      { name: "Avocado Toast Supreme", description: "With poached egg and microgreens", price: "$10.99", image: "/placeholder.svg?height=150&width=200&text=Avocado+Toast+Supreme" },
+      { name: "Avocado Toast Supreme", description: "With poached egg and microgreens", price: "$10.99", image: "/placeholder.svg?height=150&width=200&text=Avocado+Toast+Supreme", bestSeller: true },
       { name: "Acai Bowl", description: "Topped with fresh fruits and granola", price: "$9.99", image: "/placeholder.svg?height=150&width=200&text=Acai+Bowl" },
       { name: "Smoked Salmon Bagel", description: "With cream cheese and capers", price: "$11.99", image: "/placeholder.svg?height=150&width=200&text=Smoked+Salmon+Bagel" },
-      { name: "Quinoa Salad", description: "With roasted vegetables and feta", price: "$10.49", image: "/placeholder.svg?height=150&width=200&text=Quinoa+Salad" }
+      { name: "Quinoa Salad", description: "With roasted vegetables and feta", price: "$10.49", image: "/placeholder.svg?height=150&width=200&text=Quinoa+Salad", bestSeller: true }
     ],
     desserts: [
-      { name: "Tiramisu", description: "Classic Italian coffee-flavored dessert", price: "$6.99", image: "/placeholder.svg?height=150&width=200&text=Tiramisu" },
+      { name: "Tiramisu", description: "Classic Italian coffee-flavored dessert", price: "$6.99", image: "/placeholder.svg?height=150&width=200&text=Tiramisu", bestSeller: true },
       { name: "Matcha Cheesecake", description: "Creamy with a green tea twist", price: "$7.49", image: "/placeholder.svg?height=150&width=200&text=Matcha+Cheesecake" },
       { name: "Chocolate Lava Cake", description: "Warm with a gooey center", price: "$7.99", image: "/placeholder.svg?height=150&width=200&text=Chocolate+Lava+Cake" },
       { name: "Fruit Tart", description: "Buttery crust with seasonal fruits", price: "$6.49", image: "/placeholder.svg?height=150&width=200&text=Fruit+Tart" }
     ],
     seasonal: [
-      { name: "Pumpkin Spice Latte", description: "Fall favorite", price: "$5.99", image: "/placeholder.svg?height=150&width=200&text=Pumpkin+Spice+Latte" },
+      { name: "Pumpkin Spice Latte", description: "Fall favorite", price: "$5.99", image: "/placeholder.svg?height=150&width=200&text=Pumpkin+Spice+Latte", bestSeller: true },
       { name: "Maple Pecan Danish", description: "Flaky pastry with nutty goodness", price: "$4.99", image: "/placeholder.svg?height=150&width=200&text=Maple+Pecan+Danish" },
       { name: "Iced Lavender Latte", description: "Floral and refreshing", price: "$5.49", image: "/placeholder.svg?height=150&width=200&text=Iced+Lavender+Latte" },
       { name: "Berry Blast Smoothie", description: "Antioxidant powerhouse", price: "$6.49", image: "/placeholder.svg?height=150&width=200&text=Berry+Blast+Smoothie" }
     ]
   };
+
+  const reviews = [
+    { name: "Alice", rating: 5, comment: "The best coffee in town! Love the ambiance." },
+    { name: "Bob", rating: 4, comment: "Great food and service. Highly recommend the avocado toast." },
+    { name: "Charlie", rating: 5, comment: "The seasonal specials are always a treat. Can't wait to try more!" },
+    { name: "Diana", rating: 4, comment: "Cozy atmosphere and friendly staff. Perfect for work or catch-ups." }
+  ];
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
@@ -166,7 +198,7 @@ const ArthCafeLuxe = () => {
               <Button onClick={() => document.getElementById('menu').scrollIntoView({ behavior: 'smooth' })} className="bg-[#3d2c29] hover:bg-[#2d201e] text-[#f8f5f0]">Explore Our Menu</Button>
             </div>
             <div className="md:w-1/2">
-              <img src="/placeholder.svg?height=400&width=600&text=Arth+Café+Experience" alt="Arth Café Experience" className="rounded-lg shadow-2xl" />
+              <img src="/placeholder.svg?height=400&width=600&text=Arth+Cafe+Ambiance" alt="Arth Café Ambiance" className="rounded-lg shadow-2xl" />
             </div>
           </div>
         </section>
@@ -189,7 +221,12 @@ const ArthCafeLuxe = () => {
                       <Card key={item.name} className="overflow-hidden">
                         <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
                         <CardHeader>
-                          <CardTitle>{item.name}</CardTitle>
+                          <CardTitle className="flex justify-between items-center">
+                            {item.name}
+                            {item.bestSeller && (
+                              <span className="bg-yellow-400 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">Best Seller</span>
+                            )}
+                          </CardTitle>
                           <CardDescription>{item.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -287,19 +324,59 @@ const ArthCafeLuxe = () => {
                     <Label htmlFor="date" className="text-right">
                       Date
                     </Label>
-                    <Input id="date" type="date" className="col-span-3" required />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={`col-span-3 justify-start text-left font-normal ${!date && "text-muted-foreground"}`}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <CalendarComponent
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="time" className="text-right">
                       Time
                     </Label>
-                    <Input id="time" type="time" className="col-span-3" required />
+                    <Select value={time} onValueChange={setTime}>
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
+                          <SelectItem key={hour} value={`${hour}:00`}>
+                            {`${hour}:00`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="guests" className="text-right">
                       Guests
                     </Label>
-                    <Input id="guests" type="number" min="1" max="10" className="col-span-3" required />
+                    <Select value={guests.toString()} onValueChange={(value) => setGuests(parseInt(value))}>
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select number of guests" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="special-requests" className="text-right">
@@ -309,6 +386,97 @@ const ArthCafeLuxe = () => {
                   </div>
                   <Button type="submit" className="w-full bg-[#3d2c29] hover:bg-[#2d201e] text-[#f8f5f0]">Reserve Now</Button>
                 </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </section>
+
+        {/* Customer Reviews Section */}
+        <section className="py-16 bg-[#f8f5f0] dark:bg-[#1c1917]">
+          <div className="container mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-center font-serif">What Our Customers Say</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {reviews.map((review, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle>{review.name}</CardTitle>
+                    <div className="flex items-center">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{review.comment}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Coffee Selector */}
+        <section className="py-16 bg-[#d4a373] dark:bg-[#8b5e3c] text-[#3d2c29] dark:text-[#f8f5f0]">
+          <div className="container mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-8 font-serif">Find Your Perfect Brew</h2>
+            <p className="mb-8 text-lg">Answer a few questions and we'll recommend the perfect coffee for you!</p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-[#3d2c29] hover:bg-[#2d201e] text-[#f8f5f0]">Start Coffee Quiz</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Coffee Preference Quiz</DialogTitle>
+                  <DialogDescription>
+                    Let's find your ideal coffee!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div>
+                    <Label htmlFor="roast">Preferred Roast</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select roast level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="flavor">Flavor Notes</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select flavor profile" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fruity">Fruity</SelectItem>
+                        <SelectItem value="chocolatey">Chocolatey</SelectItem>
+                        <SelectItem value="nutty">Nutty</SelectItem>
+                        <SelectItem value="spicy">Spicy</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="brewing">Brewing Method</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select brewing method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="espresso">Espresso</SelectItem>
+                        <SelectItem value="drip">Drip</SelectItem>
+                        <SelectItem value="french-press">French Press</SelectItem>
+                        <SelectItem value="pour-over">Pour Over</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button className="w-full bg-[#3d2c29] hover:bg-[#2d201e] text-[#f8f5f0]" onClick={() => toast.success('Based on your preferences, we recommend our Signature Espresso!')}>
+                  Get Recommendation
+                </Button>
               </DialogContent>
             </Dialog>
           </div>
@@ -444,10 +612,37 @@ const ArthCafeLuxe = () => {
           </DialogContent>
         </Dialog>
 
+        {/* Loyalty Program Dialog */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="fixed bottom-4 right-4 bg-[#d4a373] hover:bg-[#c4946b] text-[#3d2c29]">
+              Loyalty Points: {loyaltyPoints}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Your Loyalty Rewards</DialogTitle>
+              <DialogDescription>
+                Earn points with every purchase and unlock exclusive rewards!
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <h4 className="font-bold mb-2">Current Points: {loyaltyPoints}</h4>
+              <p>Redeem your points for these rewards:</p>
+              <ul className="list-disc list-inside mt-2">
+                <li>100 points: Free coffee</li>
+                <li>200 points: Free pastry</li>
+                <li>500 points: 10% off your next order</li>
+                <li>1000 points: Exclusive coffee tasting event</li>
+              </ul>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <ToastContainer position="bottom-right" autoClose={3000} />
       </div>
     </div>
   );
 };
 
-export default ArthCafeLuxe;
+export default ArthCafeDeluxe;
